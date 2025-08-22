@@ -37,8 +37,10 @@ export async function POST(req: NextRequest) {
     await UserModel.create({
       email,
       password,
-      firstname: fullname.firstname,
-      lastname: fullname.lastname,
+      fullname: {
+        firstname: fullname.firstname,
+        lastname: fullname.lastname,
+      },
     });
 
     return NextResponse.json(
