@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import dbConnect from "./lib/dbConnect";
 import UserModel, { IUser } from "./models/user.model";
+import captainModel, { ICaptian } from "./models/captian.model";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -12,20 +13,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        loginAs: { label: "Login as", type: "select" },
       },
       async authorize(credentials: any): Promise<any> {
         await dbConnect();
         try {
-          const user = (await UserModel.findOne({
-            email: credentials.email,
-          }).select("+password")) as IUser | null;
+          let user;
+          let userType;
 
-          if (!user) {
-            throw new Error("No user found with this email");
+          if (credentials.loginAs === "user") {
+            user = (await UserModel.findOne({
+              email: credentials.email,
+            }).select("+password")) as IUser | null;
+            userType = "user";
+          } else {
+            user = (await captainModel
+              .findOne({
+                email: credentials.email,
+              })
+              .select("+password")) as ICaptian | null;
+            userType = "captain";
           }
 
-          if (typeof user.password !== "string") {
-            throw new Error("Invalid user data");
+          if (!user) {
+            throw new Error(`No ${userType} found with this email`);
           }
 
           const isPasswordCorrect = await bcrypt.compare(
@@ -34,12 +45,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           );
 
           if (isPasswordCorrect) {
-            return user;
+            return {
+              _id: String(user._id),
+              email: user.email,
+              name: `${user.fullname.firstname} ${user.fullname.lastname}`,
+              userType,
+            };
           } else {
             throw new Error("Incorrect password");
           }
         } catch (error: any) {
-          throw new Error(error);
+          throw new Error(error.message || "Authentication failed");
         }
       },
     }),
@@ -48,15 +64,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token._id = user._id?.toString();
+        token._id = user._id;
         token.email = user.email;
+        token.userType = user.userType;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
+      if (token && token._id && token.email) {
         session.user._id = token._id as string;
         session.user.email = token.email as string;
+        session.user.userType = token.userType as string;
       }
       return session;
     },
