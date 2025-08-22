@@ -100,7 +100,7 @@ captainSchema.pre("save", async function (next) {
 });
 
 const captainModel =
-  (mongoose.models.Captain as mongoose.Model<ICaptain>) ||
+  (mongoose.models?.Captain as mongoose.Model<ICaptain>) ||
   mongoose.model<ICaptain>("Captain", captainSchema);
 
 export default captainModel;

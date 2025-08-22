@@ -1,9 +1,10 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import dbConnect from "./lib/dbConnect";
+
 import UserModel, { IUser } from "./models/user.model";
-import captainModel, { ICaptain } from "./models/captain.model";
 import bcrypt from "bcryptjs";
+import captainModel, { ICaptain } from "./models/captain.model";
+import dbConnect from "./lib/dbConnect";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

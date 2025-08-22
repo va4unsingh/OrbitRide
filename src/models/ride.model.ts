@@ -70,7 +70,8 @@ const rideSchema = new mongoose.Schema<IRide>({
 });
 
 const RideModel =
-  (mongoose.models.Ride as mongoose.Model<IRide>) ||
+  (mongoose.models?.Ride as mongoose.Model<IRide>) ||
   mongoose.model<IRide>("Ride", rideSchema);
 
 export default RideModel;
+
