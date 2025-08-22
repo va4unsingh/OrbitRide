@@ -1,13 +1,33 @@
 import mongoose from "mongoose";
 
-const dbUrl = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI!;
 
-async function dbConnect() {
+if (!MONGODB_URI) {
+  throw new Error("Please define mongo_uri in env variables");
+}
+type ConnectionObject = {
+  isConnected?: number;
+};
+
+const connection: ConnectionObject = {};
+
+async function dbConnect(): Promise<void> {
+  if (connection.isConnected === 1) {
+    console.log("Already connected to database");
+    return;
+  }
   try {
-    await mongoose.connect(dbUrl);
+    const db = await mongoose.connect(MONGODB_URI, {
+      bufferCommands: false,
+    });
+
+    connection.isConnected = db.connections[0].readyState;
+
     console.log("DB connected successfully");
   } catch (error) {
     console.log("Data Base connection failed", error);
+
+    process.exit(1);
   }
 }
 

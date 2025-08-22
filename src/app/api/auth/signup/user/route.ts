@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await UserModel.create({
+    const newUser = await UserModel.create({
       email,
       password,
       fullname: {
@@ -43,8 +43,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const userWithoutPassword = await UserModel.findById(newUser._id).select(
+      "-password"
+    );
     return NextResponse.json(
-      { message: "User registered successfully" },
+      {
+        message: "User registered successfully",
+        success: true,
+        user: userWithoutPassword,
+      },
+
       { status: 200 }
     );
   } catch (error) {
