@@ -1,12 +1,12 @@
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/user.model";
-import { signUpZod } from "@/schemas/signUpSchema";
+import { signUpUserZod } from "@/schemas/userSchema/signUpUserSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const parsedBody = signUpZod.safeParse(body);
+    const parsedBody = signUpUserZod.safeParse(body);
 
     if (!parsedBody.success) {
       return NextResponse.json(

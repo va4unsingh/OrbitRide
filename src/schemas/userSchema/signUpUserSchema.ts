@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const signUpZod = z.object({
+export const signUpUserZod = z.object({
   fullname: z.object({
     firstname: z
       .string()

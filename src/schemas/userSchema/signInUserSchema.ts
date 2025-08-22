@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const signInZod = z.object({
+export const signInUserZod = z.object({
   email: z
     .email({ message: "Invalid email address" })
     .min(5, { message: "Email must be at least 5 characters long" }),
