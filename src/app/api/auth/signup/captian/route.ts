@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import { signUpCaptainZod } from "@/schemas/captainSchema/signUpCaptainSchema";
 import { NextRequest, NextResponse } from "next/server";
-import captainModel from "@/models/captian.model";
+import captainModel from "@/models/captain.model";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newCaptian = await captainModel.create({
+    const newCaptain = await captainModel.create({
       email,
       password,
       fullname: {
@@ -49,15 +49,15 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const captianWithoutPassword = await captainModel
-      .findById(newCaptian._id)
+    const captainWithoutPassword = await captainModel
+      .findById(newCaptain._id)
       .select("-password");
 
     return NextResponse.json(
       {
-        message: "Captian registered successfully",
+        message: "Captain registered successfully",
         success: true,
-        captian: captianWithoutPassword,
+        captain: captainWithoutPassword,
       },
 
       { status: 200 }
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     console.error("Registration error", error);
 
     return NextResponse.json(
-      { error: "Failed to register captian" },
+      { error: "Failed to register captain" },
       { status: 400 }
     );
   }

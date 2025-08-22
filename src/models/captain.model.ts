@@ -1,7 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export interface ICaptian extends Document {
+export interface ICaptain extends Document {
   _id: mongoose.Types.ObjectId;
   fullname: {
     firstname: string;
@@ -25,7 +25,7 @@ export interface ICaptian extends Document {
   };
 }
 
-const captainSchema = new mongoose.Schema<ICaptian>({
+const captainSchema = new mongoose.Schema<ICaptain>({
   fullname: {
     firstname: {
       type: String,
@@ -100,7 +100,7 @@ captainSchema.pre("save", async function (next) {
 });
 
 const captainModel =
-  (mongoose.models.Captian as mongoose.Model<ICaptian>) ||
-  mongoose.model<ICaptian>("Captian", captainSchema);
+  (mongoose.models.Captain as mongoose.Model<ICaptain>) ||
+  mongoose.model<ICaptain>("Captain", captainSchema);
 
 export default captainModel;

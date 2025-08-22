@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import dbConnect from "./lib/dbConnect";
 import UserModel, { IUser } from "./models/user.model";
-import captainModel, { ICaptian } from "./models/captian.model";
+import captainModel, { ICaptain } from "./models/captain.model";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -31,7 +31,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               .findOne({
                 email: credentials.email,
               })
-              .select("+password")) as ICaptian | null;
+              .select("+password")) as ICaptain | null;
             userType = "captain";
           }
 
